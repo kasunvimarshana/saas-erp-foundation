@@ -40,6 +40,9 @@ Route::prefix('v1')->group(function () {
         // User Management
         Route::apiResource('users', App\Modules\User\Http\Controllers\UserController::class);
         Route::post('users/{id}/restore', [App\Modules\User\Http\Controllers\UserController::class, 'restore']);
+        Route::post('users/{id}/assign-role', [App\Modules\User\Http\Controllers\UserController::class, 'assignRole']);
+        Route::post('users/{id}/remove-role', [App\Modules\User\Http\Controllers\UserController::class, 'removeRole']);
+        Route::post('users/{id}/sync-permissions', [App\Modules\User\Http\Controllers\UserController::class, 'syncPermissions']);
 
         // Role Management
         Route::apiResource('roles', App\Modules\Role\Http\Controllers\RoleController::class);

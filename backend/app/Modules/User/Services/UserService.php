@@ -74,6 +74,14 @@ class UserService extends BaseService
             $result = $this->repository->update($id, $data);
             
             if ($result) {
+                if ($dto->role) {
+                    $user->syncRoles([$dto->role]);
+                }
+                
+                if (!empty($dto->permissions)) {
+                    $user->syncPermissions($dto->permissions);
+                }
+                
                 $user->refresh();
                 Event::dispatch(new UserUpdated($user));
             }
