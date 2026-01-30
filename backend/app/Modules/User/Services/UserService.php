@@ -97,6 +97,11 @@ class UserService extends BaseService
     {
         return $this->executeInTransaction(function () use ($id) {
             $user = $this->repository->find($id);
+            
+            if (!$user) {
+                return false;
+            }
+            
             $result = $this->repository->delete($id);
             
             if ($result) {
