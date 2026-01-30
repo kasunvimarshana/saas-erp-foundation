@@ -46,7 +46,7 @@ abstract class BaseController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
-            $data = $this->service->create($request->all());
+            $data = $this->service->create($request->validated());
             
             return $this->successResponse($data, 'Record created successfully', 201);
         } catch (Exception $e) {
@@ -57,7 +57,7 @@ abstract class BaseController extends Controller
     public function update(Request $request, string $id): JsonResponse
     {
         try {
-            $result = $this->service->update($id, $request->all());
+            $result = $this->service->update($id, $request->validated());
             
             if (!$result) {
                 return $this->errorResponse('Record not found or update failed', 404);

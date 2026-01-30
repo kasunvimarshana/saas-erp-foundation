@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * Base Repository
+ * 
+ * Provides common data access methods for all repositories.
+ * Note: Methods like restore() and forceDelete() assume the model uses SoftDeletes trait.
+ * If your model doesn't use soft deletes, don't call these methods.
+ */
 abstract class BaseRepository
 {
     protected Model $model;
@@ -73,17 +80,10 @@ abstract class BaseRepository
         return $record->delete();
     }
 
-    public function forceDelete(string $id): bool
-    {
-        $record = $this->model->withTrashed()->find($id);
-        
-        if (!$record) {
-            return false;
-        }
-        
-        return $record->forceDelete();
-    }
-
+    /**
+     * Restore a soft-deleted record
+     * Note: Only works if model uses SoftDeletes trait
+     */
     public function restore(string $id): bool
     {
         $record = $this->model->withTrashed()->find($id);
@@ -93,6 +93,21 @@ abstract class BaseRepository
         }
         
         return $record->restore();
+    }
+
+    /**
+     * Permanently delete a record
+     * Note: Only works if model uses SoftDeletes trait
+     */
+    public function forceDelete(string $id): bool
+    {
+        $record = $this->model->withTrashed()->find($id);
+        
+        if (!$record) {
+            return false;
+        }
+        
+        return $record->forceDelete();
     }
 
     public function exists(string $field, $value): bool

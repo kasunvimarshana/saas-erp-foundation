@@ -141,7 +141,7 @@ class CustomerService extends BaseService
 
 **Step 4: Create Request Validation**
 ```bash
-# File: app/Modules/Customer/Http/Requests/CustomerRequest.php
+# File: app/Modules/Customer/Http/Requests/CreateCustomerRequest.php
 ```
 ```php
 <?php
@@ -150,18 +150,54 @@ namespace App\Modules\Customer\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CustomerRequest extends FormRequest
+class CreateCustomerRequest extends FormRequest
 {
     public function authorize()
     {
-        return true;
+        // Check if user has permission to create customers
+        return $this->user()->can('create-customer');
     }
 
     public function rules()
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:customers,email,' . $this->route('customer'),
+            'email' => 'required|email|unique:customers,email',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'city' => 'nullable|string|max:100',
+            'country' => 'nullable|string|max:100',
+            'is_active' => 'boolean',
+        ];
+    }
+}
+```
+
+```bash
+# File: app/Modules/Customer/Http/Requests/UpdateCustomerRequest.php
+```
+```php
+<?php
+
+namespace App\Modules\Customer\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateCustomerRequest extends FormRequest
+{
+    public function authorize()
+    {
+        // Check if user has permission to update customers
+        return $this->user()->can('update-customer');
+    }
+
+    public function rules()
+    {
+        $customerId = $this->route('customer');
+        
+        return [
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email|unique:customers,email,' . $customerId,
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'city' => 'nullable|string|max:100',
@@ -183,21 +219,41 @@ namespace App\Modules\Customer\Http\Controllers;
 
 use App\Base\BaseController;
 use App\Modules\Customer\Services\CustomerService;
-use App\Modules\Customer\Http\Requests\CustomerRequest;
+use App\Modules\Customer\Http\Requests\CreateCustomerRequest;
+use App\Modules\Customer\Http\Requests\UpdateCustomerRequest;
 use Illuminate\Http\JsonResponse;
 
 class CustomerController extends BaseController
 {
+    protected CustomerService $customerService;
+
     public function __construct(CustomerService $service)
     {
         parent::__construct($service);
+        $this->customerService = $service;
     }
 
-    public function store(CustomerRequest $request): JsonResponse
+    public function store(CreateCustomerRequest $request): JsonResponse
     {
         try {
-            $data = $this->service->createCustomer($request->validated());
+            $data = $this->customerService->createCustomer($request->validated());
             return $this->successResponse($data, 'Customer created successfully', 201);
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
+
+    public function update(UpdateCustomerRequest $request, string $id): JsonResponse
+    {
+        try {
+            $result = $this->customerService->update($id, $request->validated());
+            
+            if (!$result) {
+                return $this->errorResponse('Customer not found or update failed', 404);
+            }
+            
+            $data = $this->customerService->findById($id);
+            return $this->successResponse($data, 'Customer updated successfully');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
         }
@@ -206,7 +262,7 @@ class CustomerController extends BaseController
     public function active(): JsonResponse
     {
         try {
-            $data = $this->service->getActiveCustomers();
+            $data = $this->customerService->getActiveCustomers();
             return $this->successResponse($data, 'Active customers retrieved successfully');
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);

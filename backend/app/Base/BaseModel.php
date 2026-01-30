@@ -29,21 +29,21 @@ abstract class BaseModel extends Model
         });
     }
 
-    public function getIncrementing()
+    public function getIncrementing(): bool
     {
         return false;
     }
 
-    public function getKeyType()
+    public function getKeyType(): string
     {
         return 'string';
     }
 
-    public function scopeActive($query)
-    {
-        return $query->whereNull('deleted_at');
-    }
-
+    /**
+     * Filter records based on field values
+     * Note: Uses LIKE operator for text-based fuzzy searching
+     * For exact matches or other field types, override this scope in your model
+     */
     public function scopeFilter($query, array $filters)
     {
         foreach ($filters as $field => $value) {
