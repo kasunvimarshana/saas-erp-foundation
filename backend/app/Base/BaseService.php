@@ -4,6 +4,9 @@ namespace App\Base;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Exception;
 
 abstract class BaseService
@@ -15,7 +18,7 @@ abstract class BaseService
         $this->repository = $repository;
     }
 
-    public function getAll(array $relations = [])
+    public function getAll(array $relations = []): Collection
     {
         try {
             return $this->repository->all(['*'], $relations);
@@ -25,7 +28,7 @@ abstract class BaseService
         }
     }
 
-    public function paginate(int $perPage = 15, array $relations = [])
+    public function paginate(int $perPage = 15, array $relations = []): LengthAwarePaginator
     {
         try {
             return $this->repository->paginate($perPage, ['*'], $relations);
@@ -35,7 +38,7 @@ abstract class BaseService
         }
     }
 
-    public function findById(string $id, array $relations = [])
+    public function findById(string $id, array $relations = []): ?Model
     {
         try {
             return $this->repository->find($id, ['*'], $relations);
@@ -45,7 +48,7 @@ abstract class BaseService
         }
     }
 
-    public function create(array $data)
+    public function create(array $data): Model
     {
         DB::beginTransaction();
         
@@ -60,7 +63,7 @@ abstract class BaseService
         }
     }
 
-    public function update(string $id, array $data)
+    public function update(string $id, array $data): bool
     {
         DB::beginTransaction();
         
@@ -75,7 +78,7 @@ abstract class BaseService
         }
     }
 
-    public function delete(string $id)
+    public function delete(string $id): bool
     {
         DB::beginTransaction();
         
@@ -90,7 +93,7 @@ abstract class BaseService
         }
     }
 
-    public function restore(string $id)
+    public function restore(string $id): bool
     {
         DB::beginTransaction();
         
@@ -105,7 +108,7 @@ abstract class BaseService
         }
     }
 
-    public function forceDelete(string $id)
+    public function forceDelete(string $id): bool
     {
         DB::beginTransaction();
         

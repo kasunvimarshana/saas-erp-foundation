@@ -5,6 +5,7 @@ namespace App\Base;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
 use Exception;
 
 abstract class BaseController extends Controller
@@ -43,7 +44,7 @@ abstract class BaseController extends Controller
         }
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(FormRequest $request): JsonResponse
     {
         try {
             $data = $this->service->create($request->validated());
@@ -54,7 +55,7 @@ abstract class BaseController extends Controller
         }
     }
 
-    public function update(Request $request, string $id): JsonResponse
+    public function update(FormRequest $request, string $id): JsonResponse
     {
         try {
             $result = $this->service->update($id, $request->validated());

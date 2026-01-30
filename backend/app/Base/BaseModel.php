@@ -3,8 +3,9 @@
 namespace App\Base;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 abstract class BaseModel extends Model
 {
@@ -44,7 +45,7 @@ abstract class BaseModel extends Model
      * Note: Uses LIKE operator for text-based fuzzy searching
      * For exact matches or other field types, override this scope in your model
      */
-    public function scopeFilter($query, array $filters)
+    public function scopeFilter(Builder $query, array $filters): Builder
     {
         foreach ($filters as $field => $value) {
             if (!empty($value)) {
