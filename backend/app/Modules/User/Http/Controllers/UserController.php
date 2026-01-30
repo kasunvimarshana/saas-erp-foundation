@@ -359,4 +359,38 @@ class UserController extends BaseController
             return $this->errorResponse($e->getMessage(), 500);
         }
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/v1/users/{id}/restore",
+     *     tags={"Users"},
+     *     summary="Restore a soft-deleted user",
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User restored successfully"
+     *     ),
+     *     @OA\Response(response=404, description="User not found")
+     * )
+     */
+    public function restore(string $id): JsonResponse
+    {
+        try {
+            $restored = $this->service->restore($id);
+            
+            if (!$restored) {
+                return $this->errorResponse('Failed to restore user', 500);
+            }
+            
+            return $this->successResponse(null, 'User restored successfully');
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), 500);
+        }
+    }
 }

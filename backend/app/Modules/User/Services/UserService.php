@@ -59,6 +59,12 @@ class UserService extends BaseService
     public function updateUser(string $id, UserDTO $dto): bool
     {
         return $this->executeInTransaction(function () use ($id, $dto) {
+            $user = $this->repository->find($id);
+            
+            if (!$user) {
+                return false;
+            }
+            
             $data = $dto->toArray();
             
             if (isset($data['password'])) {
@@ -68,7 +74,7 @@ class UserService extends BaseService
             $result = $this->repository->update($id, $data);
             
             if ($result) {
-                $user = $this->repository->find($id);
+                $user->refresh();
                 Event::dispatch(new UserUpdated($user));
             }
             
