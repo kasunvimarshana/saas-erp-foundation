@@ -75,18 +75,13 @@ Route::prefix('v1')->group(function () {
         Route::get('products/{id}/variants', [App\Modules\Product\Http\Controllers\ProductController::class, 'variants']);
         Route::post('products/{id}/variants', [App\Modules\Product\Http\Controllers\ProductController::class, 'addVariant']);
 
-        // Order Management
-        Route::apiResource('orders', App\Modules\Order\Http\Controllers\OrderController::class);
-        Route::post('orders/{id}/cancel', [App\Modules\Order\Http\Controllers\OrderController::class, 'cancel']);
-        Route::post('orders/{id}/complete', [App\Modules\Order\Http\Controllers\OrderController::class, 'complete']);
-
-        // Invoice Management
-        Route::apiResource('invoices', App\Modules\Invoice\Http\Controllers\InvoiceController::class);
-        Route::post('invoices/{id}/send', [App\Modules\Invoice\Http\Controllers\InvoiceController::class, 'send']);
-        Route::get('invoices/{id}/pdf', [App\Modules\Invoice\Http\Controllers\InvoiceController::class, 'pdf']);
-
-        // Payment Management
-        Route::apiResource('payments', App\Modules\Payment\Http\Controllers\PaymentController::class);
-        Route::post('payments/{id}/refund', [App\Modules\Payment\Http\Controllers\PaymentController::class, 'refund']);
+        // TODO: Implement Order Management module
+        // Route::apiResource('orders', App\Modules\Order\Http\Controllers\OrderController::class);
+        
+        // TODO: Implement Invoice Management module
+        // Route::apiResource('invoices', App\Modules\Invoice\Http\Controllers\InvoiceController::class);
+        
+        // TODO: Implement Payment Management module
+        // Route::apiResource('payments', App\Modules\Payment\Http\Controllers\PaymentController::class);
     });
 });

@@ -6,7 +6,6 @@ use App\Base\BaseModel;
 use App\Modules\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @OA\Schema(
@@ -66,10 +65,16 @@ class Product extends BaseModel
         return $this->hasMany(ProductVariant::class, 'product_id');
     }
 
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(\App\Models\Category::class, 'product_categories', 'product_id', 'category_id');
-    }
+    /**
+     * Categories relationship (optional - implement when Category model is created)
+     * 
+     * Uncomment when Category model and product_categories pivot table are created:
+     * 
+     * public function categories(): BelongsToMany
+     * {
+     *     return $this->belongsToMany(\App\Models\Category::class, 'product_categories', 'product_id', 'category_id');
+     * }
+     */
 
     public function isActive(): bool
     {
