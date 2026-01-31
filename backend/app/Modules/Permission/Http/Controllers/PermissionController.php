@@ -14,11 +14,11 @@ use Illuminate\Http\JsonResponse;
  */
 class PermissionController extends BaseController
 {
-    protected PermissionService $service;
+    protected PermissionService $permissionService;
 
-    public function __construct(PermissionService $service)
+    public function __construct(PermissionService $permissionService)
     {
-        $this->service = $service;
+        $this->permissionService = $permissionService;
     }
 
     /**
@@ -54,11 +54,11 @@ class PermissionController extends BaseController
     {
         try {
             if ($request->boolean('grouped')) {
-                $permissions = $this->service->getGrouped();
+                $permissions = $this->permissionService->getGrouped();
                 return $this->successResponse($permissions, 'Permissions retrieved successfully (grouped by module)');
             }
             
-            $permissions = $this->service->getAll();
+            $permissions = $this->permissionService->getAllPermissions();
             
             return $this->successResponse($permissions, 'Permissions retrieved successfully');
         } catch (\Exception $e) {
@@ -94,7 +94,7 @@ class PermissionController extends BaseController
     public function show(string $id): JsonResponse
     {
         try {
-            $permission = $this->service->findById($id);
+            $permission = $this->permissionService->getPermissionById($id);
             
             if (!$permission) {
                 return $this->errorResponse('Permission not found', 404);

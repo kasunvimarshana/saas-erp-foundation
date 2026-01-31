@@ -14,7 +14,7 @@ class PermissionService extends BaseService
         parent::__construct($repository);
     }
 
-    public function getAll(): Collection
+    public function getAllPermissions(): Collection
     {
         return $this->repository->all(['*']);
     }
@@ -24,7 +24,7 @@ class PermissionService extends BaseService
         return $this->repository->getAllGrouped();
     }
 
-    public function findById(string $id): ?Model
+    public function getPermissionById(string $id): ?Model
     {
         return $this->repository->find($id);
     }

@@ -9,6 +9,7 @@ use App\Modules\Role\Http\Requests\StoreRoleRequest;
 use App\Modules\Role\Http\Requests\UpdateRoleRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * @OA\Tag(
@@ -18,11 +19,11 @@ use Illuminate\Http\Request;
  */
 class RoleController extends BaseController
 {
-    protected RoleService $service;
+    protected RoleService $roleService;
 
-    public function __construct(RoleService $service)
+    public function __construct(RoleService $roleService)
     {
-        $this->service = $service;
+        $this->roleService = $roleService;
     }
 
     /**
@@ -56,7 +57,7 @@ class RoleController extends BaseController
     {
         try {
             $perPage = $request->get('per_page', 15);
-            $roles = $this->service->paginate($perPage, ['permissions', 'tenant']);
+            $roles = $this->roleService->paginate($perPage, ['permissions', 'tenant']);
             
             return $this->successResponse($roles, 'Roles retrieved successfully');
         } catch (\Exception $e) {
@@ -92,11 +93,11 @@ class RoleController extends BaseController
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function store(StoreRoleRequest $request): JsonResponse
+    public function store(FormRequest $request): JsonResponse
     {
         try {
             $dto = RoleDTO::fromArray($request->validated());
-            $role = $this->service->createRole($dto);
+            $role = $this->roleService->createRole($dto);
             
             return $this->successResponse($role, 'Role created successfully', 201);
         } catch (\Exception $e) {
@@ -127,7 +128,7 @@ class RoleController extends BaseController
     public function show(string $id): JsonResponse
     {
         try {
-            $role = $this->service->findById($id, ['permissions', 'tenant']);
+            $role = $this->roleService->findById($id, ['permissions', 'tenant']);
             
             if (!$role) {
                 return $this->errorResponse('Role not found', 404);
@@ -172,11 +173,11 @@ class RoleController extends BaseController
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function update(UpdateRoleRequest $request, string $id): JsonResponse
+    public function update(FormRequest $request, string $id): JsonResponse
     {
         try {
             $dto = RoleDTO::fromArray($request->validated());
-            $updated = $this->service->updateRole($id, $dto);
+            $updated = $this->roleService->updateRole($id, $dto);
             
             if (!$updated) {
                 return $this->errorResponse('Failed to update role', 500);
@@ -210,7 +211,7 @@ class RoleController extends BaseController
     public function destroy(string $id): JsonResponse
     {
         try {
-            $deleted = $this->service->deleteRole($id);
+            $deleted = $this->roleService->deleteRole($id);
             
             if (!$deleted) {
                 return $this->errorResponse('Failed to delete role', 500);
@@ -260,7 +261,7 @@ class RoleController extends BaseController
                 'permissions.*' => ['string', 'exists:permissions,name'],
             ]);
             
-            $result = $this->service->syncPermissions($id, $request->permissions);
+            $result = $this->roleService->syncPermissions($id, $request->permissions);
             
             if (!$result) {
                 return $this->errorResponse('Failed to sync permissions', 500);
