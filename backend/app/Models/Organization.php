@@ -6,6 +6,7 @@ use App\Base\BaseModel;
 use App\Modules\Tenant\Models\Tenant;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Organization/Branch Model
@@ -31,13 +32,21 @@ class Organization extends BaseModel
         'settings',
     ];
 
-    protected $casts = [
-        'is_active' => 'boolean',
-        'settings' => 'array',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
-    ];
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'settings' => 'array',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
+        ];
+    }
 
     /**
      * Tenant relationship
@@ -74,7 +83,7 @@ class Organization extends BaseModel
     /**
      * Scope: Active organizations
      */
-    public function scopeActive($query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
