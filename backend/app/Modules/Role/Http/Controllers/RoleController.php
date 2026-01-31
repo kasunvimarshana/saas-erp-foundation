@@ -92,6 +92,8 @@ class RoleController extends BaseController
      *     ),
      *     @OA\Response(response=422, description="Validation error")
      * )
+     * 
+     * @param StoreRoleRequest $request
      */
     public function store(FormRequest $request): JsonResponse
     {
@@ -172,6 +174,8 @@ class RoleController extends BaseController
      *     @OA\Response(response=404, description="Role not found"),
      *     @OA\Response(response=422, description="Validation error")
      * )
+     * 
+     * @param UpdateRoleRequest $request
      */
     public function update(FormRequest $request, string $id): JsonResponse
     {
