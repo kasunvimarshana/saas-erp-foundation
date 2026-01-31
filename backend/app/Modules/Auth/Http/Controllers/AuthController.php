@@ -3,6 +3,7 @@
 namespace App\Modules\Auth\Http\Controllers;
 
 use App\Base\BaseController;
+use App\Modules\Auth\DTOs\RegisterDTO;
 use App\Modules\Auth\Http\Requests\ForgotPasswordRequest;
 use App\Modules\Auth\Http\Requests\LoginRequest;
 use App\Modules\Auth\Http\Requests\RegisterRequest;
@@ -26,7 +27,6 @@ class AuthController extends BaseController
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
-        parent::__construct($authService);
     }
 
     /**
@@ -82,7 +82,8 @@ class AuthController extends BaseController
     public function register(RegisterRequest $request): JsonResponse
     {
         try {
-            $result = $this->authService->register($request->validated());
+            $dto = RegisterDTO::fromArray($request->validated());
+            $result = $this->authService->register($dto);
             
             return $this->successResponse($result, 'User registered successfully', 201);
         } catch (\Exception $e) {

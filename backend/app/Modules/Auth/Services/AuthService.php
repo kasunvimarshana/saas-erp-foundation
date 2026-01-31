@@ -16,12 +16,10 @@ use Exception;
 
 class AuthService
 {
-    public function register(array $data): array
+    public function register(RegisterDTO $dto): array
     {
         try {
-            return DB::transaction(function () use ($data) {
-                $dto = RegisterDTO::fromArray($data);
-                
+            return DB::transaction(function () use ($dto) {
                 $user = User::create([
                     'name' => $dto->name,
                     'email' => $dto->email,
