@@ -75,13 +75,25 @@ Route::prefix('v1')->group(function () {
         Route::get('products/{id}/variants', [App\Modules\Product\Http\Controllers\ProductController::class, 'variants']);
         Route::post('products/{id}/variants', [App\Modules\Product\Http\Controllers\ProductController::class, 'addVariant']);
 
-        // TODO: Implement Order Management module
-        // Route::apiResource('orders', App\Modules\Order\Http\Controllers\OrderController::class);
-        
-        // TODO: Implement Invoice Management module
-        // Route::apiResource('invoices', App\Modules\Invoice\Http\Controllers\InvoiceController::class);
-        
-        // TODO: Implement Payment Management module
-        // Route::apiResource('payments', App\Modules\Payment\Http\Controllers\PaymentController::class);
+        // Order Management
+        Route::apiResource('orders', App\Modules\Order\Http\Controllers\OrderController::class);
+        Route::post('orders/{id}/cancel', [App\Modules\Order\Http\Controllers\OrderController::class, 'cancel']);
+        Route::post('orders/{id}/complete', [App\Modules\Order\Http\Controllers\OrderController::class, 'complete']);
+        Route::get('orders/{id}/items', [App\Modules\Order\Http\Controllers\OrderController::class, 'items']);
+        Route::post('orders/{id}/items', [App\Modules\Order\Http\Controllers\OrderController::class, 'addItem']);
+
+        // Invoice Management
+        Route::apiResource('invoices', App\Modules\Invoice\Http\Controllers\InvoiceController::class);
+        Route::post('invoices/{id}/send', [App\Modules\Invoice\Http\Controllers\InvoiceController::class, 'send']);
+        Route::get('invoices/{id}/pdf', [App\Modules\Invoice\Http\Controllers\InvoiceController::class, 'pdf']);
+        Route::get('invoices/{id}/items', [App\Modules\Invoice\Http\Controllers\InvoiceController::class, 'items']);
+        Route::post('invoices/{id}/items', [App\Modules\Invoice\Http\Controllers\InvoiceController::class, 'addItem']);
+        Route::post('invoices/{id}/payments', [App\Modules\Invoice\Http\Controllers\InvoiceController::class, 'recordPayment']);
+
+        // Payment Management
+        Route::apiResource('payments', App\Modules\Payment\Http\Controllers\PaymentController::class);
+        Route::post('payments/{id}/complete', [App\Modules\Payment\Http\Controllers\PaymentController::class, 'complete']);
+        Route::post('payments/{id}/refund', [App\Modules\Payment\Http\Controllers\PaymentController::class, 'refund']);
+        Route::get('payments/summary', [App\Modules\Payment\Http\Controllers\PaymentController::class, 'summary']);
     });
 });
