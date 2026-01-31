@@ -10,6 +10,7 @@ use App\Modules\Auth\Events\UserRegistered;
 use App\Modules\User\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset as LaravelPasswordReset;
 use Exception;
@@ -38,7 +39,8 @@ class AuthService
                 ];
             });
         } catch (Exception $e) {
-            throw new Exception('Registration failed: ' . $e->getMessage());
+            Log::error('Registration failed: ' . $e->getMessage(), ['dto' => $dto->toArray()]);
+            throw new Exception('Registration failed. Please try again.');
         }
     }
 
@@ -64,7 +66,11 @@ class AuthService
                 'token' => $token,
             ];
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            if ($e->getMessage() === 'Invalid credentials' || $e->getMessage() === 'Account is inactive') {
+                throw $e;
+            }
+            Log::error('Login failed: ' . $e->getMessage(), ['email' => $email]);
+            throw new Exception('Login failed. Please try again.');
         }
     }
 
@@ -77,7 +83,8 @@ class AuthService
 
             return true;
         } catch (Exception $e) {
-            throw new Exception('Logout failed: ' . $e->getMessage());
+            Log::error('Logout failed: ' . $e->getMessage(), ['user_id' => $user->id]);
+            throw new Exception('Logout failed. Please try again.');
         }
     }
 
@@ -87,18 +94,19 @@ class AuthService
             $user = User::where('email', $email)->first();
 
             if (!$user) {
-                throw new Exception('User not found');
+                return true;
             }
 
             $status = Password::sendResetLink(['email' => $email]);
 
             if ($status !== Password::RESET_LINK_SENT) {
-                throw new Exception('Failed to send password reset link');
+                Log::error('Password reset link sending failed', ['email' => $email, 'status' => $status]);
             }
 
             return true;
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            Log::error('Forgot password error: ' . $e->getMessage(), ['email' => $email]);
+            return true;
         }
     }
 
@@ -132,7 +140,8 @@ class AuthService
                 return true;
             });
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            Log::error('Password reset failed: ' . $e->getMessage(), ['email' => $email]);
+            throw new Exception('Password reset failed. Please try again or request a new reset link.');
         }
     }
 
@@ -159,7 +168,8 @@ class AuthService
                 return true;
             });
         } catch (Exception $e) {
-            throw new Exception('Profile update failed: ' . $e->getMessage());
+            Log::error('Profile update failed: ' . $e->getMessage(), ['user_id' => $user->id]);
+            throw new Exception('Profile update failed. Please try again.');
         }
     }
 
@@ -180,7 +190,11 @@ class AuthService
                 return true;
             });
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            if ($e->getMessage() === 'Current password is incorrect') {
+                throw $e;
+            }
+            Log::error('Password update failed: ' . $e->getMessage(), ['user_id' => $user->id]);
+            throw new Exception('Password update failed. Please try again.');
         }
     }
 }
