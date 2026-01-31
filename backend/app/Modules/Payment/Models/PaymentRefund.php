@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *     description="Payment refund model",
  *     @OA\Property(property="id", type="string", format="uuid"),
  *     @OA\Property(property="payment_id", type="string", format="uuid"),
- *     @OA\Property(property="refund_number", type="string", example="REF-2024-001"),
+ *     @OA\Property(property="refund_number", type="string", example="REF-2026-001"),
  *     @OA\Property(property="refund_date", type="string", format="date"),
  *     @OA\Property(property="amount", type="number", format="float", example=500.00),
  *     @OA\Property(property="reason", type="string"),

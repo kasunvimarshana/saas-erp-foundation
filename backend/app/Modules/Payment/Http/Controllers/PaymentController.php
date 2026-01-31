@@ -85,7 +85,7 @@ class PaymentController extends BaseController
      *             @OA\Property(property="branch_id", type="string", format="uuid"),
      *             @OA\Property(property="customer_id", type="string", format="uuid"),
      *             @OA\Property(property="invoice_id", type="string", format="uuid", nullable=true),
-     *             @OA\Property(property="payment_number", type="string", example="PAY-2024-001"),
+     *             @OA\Property(property="payment_number", type="string", example="PAY-2026-001"),
      *             @OA\Property(property="payment_date", type="string", format="date"),
      *             @OA\Property(property="payment_method", type="string", enum={"cash", "card", "bank_transfer", "cheque", "online", "other"}),
      *             @OA\Property(property="amount", type="number", format="float"),
@@ -351,7 +351,7 @@ class PaymentController extends BaseController
      *         required=true,
      *         @OA\JsonContent(
      *             required={"refund_number", "refund_date", "amount", "reason"},
-     *             @OA\Property(property="refund_number", type="string", example="REF-2024-001"),
+     *             @OA\Property(property="refund_number", type="string", example="REF-2026-001"),
      *             @OA\Property(property="refund_date", type="string", format="date"),
      *             @OA\Property(property="amount", type="number", format="float"),
      *             @OA\Property(property="reason", type="string"),
